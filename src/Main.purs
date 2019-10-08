@@ -53,7 +53,7 @@ prepareResult (Right result) = {status: 200, response: writeJSON result}
 
 readdir' :: String -> Aff (Array Path)
 readdir' path = do
-  withStats <- traverse pairWithStat =<< filter (contains (Pattern "mkv"))
+  withStats <- traverse pairWithStat =<< filter (contains (Pattern "mp4"))
                                      <$> readdir path
   pure $ Path <<< fst <$> sortByDate withStats
   where
@@ -69,7 +69,9 @@ type Config =
   }
 
 getFiles :: Config -> ExceptT Error Aff (Array Path)
-getFiles {dir} = liftAff $ readdir' dir
+getFiles {dir} = liftAff $ do
+  liftAff $ log "Read dir"
+  readdir' dir
 
 readFail :: forall a. ReadForeign a => (String -> Error) -> Foreign -> ExceptT Error Aff a
 readFail ctr f = except <<< lmap (ctr <<< printMultipleErrors) $ read f
@@ -232,6 +234,7 @@ main = launchAff_ do
       log $ printUhOhSpagghettios e
       liftEffect $ exit 1
     Right ({vidtracker} :: C.Config) -> do
+      log "Parsed config.ini"
       db <- ensureDB $ concat [vidtracker.dir, "filetracker"]
       let config = Record.merge vidtracker {db}
       _ <- liftEffect do
@@ -255,7 +258,7 @@ main = launchAff_ do
           }
           app
 
-        _ <- M.listen (M.Port 4567) (log "Started server") app
+        _ <- M.listen (M.Port 8080) (log "Started server") app
         pure unit
       pure unit
 
