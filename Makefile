@@ -11,6 +11,9 @@ purs-deps:
 build-fe:
 	node_modules/.bin/parcel build index.html
 
-# USE parcel serve instead!
-# start-server:
-# 	node index.js
+# Start server
+start:
+	npm start
+
+test:
+	npm test
