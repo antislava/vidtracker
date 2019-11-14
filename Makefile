@@ -1,6 +1,8 @@
+.PHONY:  build build-frontend purs-deps npm-deps test-puppeteer test run-server
+
 build: npm-deps purs-deps
 	spago2nix build
-	make build-fe
+	make build-frontend
 
 npm-deps:
 	npm install
@@ -8,12 +10,17 @@ npm-deps:
 purs-deps:
 	spago2nix install -j 8
 
-build-fe:
+build-frontend:
 	node_modules/.bin/parcel build index.html
 
-# Start server
-start:
-	npm start
+test-puppeteer:
+	./puppeteer-test.js
+
+run-server:
+	@echo NOTE THE PORT USED:
+	grep listen src/Main.purs
+	grep localhost src/FrontEnd/HTTP.purs
+	spago run
 
 test:
-	npm test
+	spago test

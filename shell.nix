@@ -15,4 +15,8 @@ let
 in
 pkgs.mkShell {
   buildInputs = [ easy-ps.purs easy-ps.spago easy-ps.spago2nix pkgs.cacert ] ++ [ pkgs.nodejs ];
+  shellHook = ''
+    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+    export PUPPETEER_EXECUTABLE_PATH=${pkgs.chromium.outPath}/bin/chromium
+  '';
 }
