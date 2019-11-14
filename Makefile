@@ -11,10 +11,6 @@ purs-deps:
 build-fe:
 	node_modules/.bin/parcel build index.html
 
-start-server:
-	node index.js
-
-asdf:
-	cat > $@ <<EOF \n \
-asdf \n \
-EOF
+# USE parcel serve instead!
+# start-server:
+# 	node index.js
